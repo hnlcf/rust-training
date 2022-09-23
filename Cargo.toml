@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "basic",
+    "circular_queue",
+    "exec",
+    "lou-grep",
+    "my-redis",
+    "r-graph",
+    "xdiff",
+]
