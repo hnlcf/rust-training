@@ -1,10 +1,7 @@
 [workspace]
 members = [
     "code/basic",
-    "code/circular_queue",
-    "code/exec",
-    "code/lou-grep",
-    "code/my-redis",
-    "code/r-graph",
+    "code/dsa",
+    # "code/my-redis"
     "code/xdiff",
 ]

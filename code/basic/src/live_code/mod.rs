@@ -2,8 +2,6 @@ pub mod actor;
 pub mod cell;
 pub mod encoder;
 pub mod fibonacci;
-pub mod merge_sort;
-pub mod strsplit;
 pub mod strtok;
 pub mod ticket;
 pub mod user;

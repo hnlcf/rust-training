@@ -7,6 +7,12 @@ pub struct Graph<T> {
     pub nodes: BTreeMap<usize, Option<T>>,
 }
 
+impl<T: Ord> Default for Graph<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Ord> Graph<T> {
     pub fn new() -> Self {
         Self {
@@ -101,13 +107,15 @@ impl<T: Ord> Graph<T> {
             false
         }
     }
+}
 
-    pub fn to_string(&self) -> String {
+impl<T: Ord> Display for Graph<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.is_empty() {
-            format!("Graph: empty")
+            write!(f, "Graph: empty")
         } else {
             let max = self.max_key();
-            let mut output = format!("  ");
+            let mut output = "  ".to_string();
 
             (0..=max).for_each(|x| output.push_str(&format!("{:<2}", x)));
 
@@ -119,19 +127,13 @@ impl<T: Ord> Graph<T> {
                         "{:2}",
                         (match self.matrix[i][j] {
                             Some(e) => format!("{}", e),
-                            None => format!("."),
+                            None => ".".to_string(),
                         })
                     ))
                 }
             }
-            output
+            write!(f, "{}", output)
         }
-    }
-}
-
-impl<T: Ord> Display for Graph<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string())
     }
 }
 
