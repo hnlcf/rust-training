@@ -1,5 +1,0 @@
-# Circular Queue
-
-## Todo
-
-- Iterator
