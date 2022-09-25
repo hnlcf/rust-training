@@ -3,5 +3,6 @@ members = [
     "code/basic",
     "code/dsa",
     # "code/my-redis"
-    "code/xdiff",
+    # "code/xdiff",
+    # "code/kv",
 ]
