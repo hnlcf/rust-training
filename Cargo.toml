@@ -5,4 +5,5 @@ members = [
     # "code/my-redis"
     # "code/xdiff",
     # "code/kv",
+    "code/pow",
 ]
