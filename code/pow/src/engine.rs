@@ -1,11 +1,12 @@
 use crate::proto::{Block, BlockHash};
 use blake3::Hasher;
+use rayon::prelude::*;
 
 const PREFI_ZERO_NUM: usize = 3;
 
 pub fn pow(block: Block) -> Option<BlockHash> {
     let hasher = blake3_base_hash(&block.data);
-    let nonce = (0..u32::MAX).find(|&n| {
+    let nonce = (0..u32::MAX).into_par_iter().find_any(|&n| {
         let hash = blake3_hash(hasher.clone(), n);
         hash[0..PREFI_ZERO_NUM] == [0; PREFI_ZERO_NUM]
     });
