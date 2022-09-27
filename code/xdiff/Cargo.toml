@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Changfeng Lou<louchangfeng@outlook.com>"]
 edition = "2021"
 
+[[bin]]
+name = "xdiff"
+path = "src/bin/xdiff-bin.rs"
+
+[[bin]]
+name = "xreq"
+path = "src/bin/xreq-bin.rs"
+
 [dependencies]
 anyhow = "1.0.62"
 clap = { version = "3.2.17", features = ["derive"] }
