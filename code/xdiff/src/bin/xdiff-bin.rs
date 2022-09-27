@@ -7,10 +7,10 @@ use xdiff::{
     cli::{Action, Args, OverrideArgs, RunArgs},
     config::DiffConfig,
     profile::{DiffProfile, RequestProfile, ResponseProfile},
+    utils::highlight_text,
 };
 
 const DEFAULT_CONFIG_PATH: &str = "~/.xdiff";
-
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -73,26 +73,11 @@ async fn parse() -> Result<()> {
     let config = DiffConfig::new(vec![(profile_name, profile)].into_iter().collect());
 
     let result = serde_yaml::to_string(&config)?;
-    {
-        // Syntax highlighting
-        use syntect::{
-            easy::HighlightLines,
-            highlighting::{Style, ThemeSet},
-            parsing::SyntaxSet,
-            util::{as_24_bit_terminal_escaped, LinesWithEndings},
-        };
-        // Load these once at the start of your program
-        let ps = SyntaxSet::load_defaults_newlines();
-        let ts = ThemeSet::load_defaults();
+    write!(
+        std::io::stdout().lock(),
+        "---\n{}",
+        highlight_text(&result, "yaml")?
+    )?;
 
-        let syntax = ps.find_syntax_by_extension("yaml").unwrap();
-        let mut h = HighlightLines::new(syntax, &ts.themes["base16-ocean.dark"]);
-
-        for line in LinesWithEndings::from(&result) {
-            let ranges: Vec<(Style, &str)> = h.highlight_line(line, &ps).unwrap();
-            let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
-            print!("{}", escaped);
-        }
-    }
     Ok(())
 }

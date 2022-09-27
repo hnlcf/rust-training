@@ -4,6 +4,13 @@ use std::fmt::{self, Write};
 use console::{style, Style};
 use similar::{ChangeTag, TextDiff};
 
+use syntect::{
+    easy::HighlightLines,
+    highlighting::{self, ThemeSet},
+    parsing::SyntaxSet,
+    util::{as_24_bit_terminal_escaped, LinesWithEndings},
+};
+
 struct Line(Option<usize>);
 
 impl fmt::Display for Line {
@@ -50,5 +57,23 @@ pub fn diff_text(text1: &str, text2: &str) -> Result<String> {
             }
         }
     }
+    Ok(output)
+}
+
+pub fn highlight_text(text: &str, extension: &str) -> Result<String> {
+    let syntax_set = SyntaxSet::load_defaults_newlines();
+    let theme_set = ThemeSet::load_defaults();
+    let syntax = syntax_set.find_syntax_by_extension(extension).unwrap();
+
+    let mut output = String::new();
+    let mut highlight = HighlightLines::new(syntax, &theme_set.themes["base16-ocean.dark"]);
+    for line in LinesWithEndings::from(text) {
+        let ranges: Vec<(highlighting::Style, &str)> =
+            highlight.highlight_line(line, &syntax_set)?;
+        let escaped = as_24_bit_terminal_escaped(&ranges[..], false);
+
+        write!(&mut output, "{}", escaped)?;
+    }
+
     Ok(output)
 }
