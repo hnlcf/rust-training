@@ -17,8 +17,8 @@ pub type AscIterMut<'a, T> = Chain<SliceIterMut<'a, T>, SliceIterMut<'a, T>>;
 pub struct CircularQueue<T> {
     data: Vec<T>,
     capacity: usize,
-    /// The tail index plus 1, and the head index iff queue is full
-    idx: usize,
+    head: usize,
+    tail: usize,
 }
 
 impl<T> CircularQueue<T>
@@ -30,7 +30,8 @@ where
         Self {
             data: Vec::with_capacity(capacity),
             capacity,
-            idx: 0,
+            head: 0,
+            tail: 0,
         }
     }
 
@@ -56,66 +57,63 @@ where
 
     #[inline]
     pub fn push(&mut self, val: T) -> bool {
-        if self.capacity() == 0 {
+        if self.capacity() == 0 || self.is_full() {
             return false;
         }
 
-        if !self.is_full() {
-            self.data.push(val);
-        } else {
-            *self.data.get_mut(self.idx).unwrap() = val;
-        }
-
-        self.idx = self.inc_idx();
+        self.data.insert(self.tail, val);
+        self.tail = (self.tail + 1) % self.capacity();
 
         true
     }
 
     #[inline]
-    fn inc_idx(&self) -> usize {
-        (self.idx + 1) % self.capacity()
-    }
-
-    #[inline]
-    fn dec_idx(&self) -> usize {
-        (self.idx + self.capacity() - 1) % self.capacity()
+    pub fn pop(&mut self) -> bool {
+        if self.is_empty() {
+            return false;
+        }
+        self.data.remove(self.head);
+        self.head = (self.head + 1) % self.capacity();
+        true
     }
 
     #[inline]
     pub fn front(&self) -> Option<T> {
-        if !self.is_full() {
-            self.data.first().copied()
-        } else {
-            self.data.get(self.idx).copied()
+        if self.is_empty() {
+            return None;
         }
+
+        self.data.get(self.head).copied()
     }
 
     #[inline]
     pub fn back(&self) -> Option<T> {
-        self.data.get(self.dec_idx()).copied()
+        self.data
+            .get((self.tail + self.capacity() - 1) % self.capacity())
+            .copied()
     }
 
     #[inline]
     pub fn iter(&self) -> Iter<T> {
-        let (a, b) = self.data.split_at(self.idx);
+        let (a, b) = self.data.split_at(self.head);
         a.iter().rev().chain(b.iter().rev())
     }
 
     #[inline]
     pub fn iter_mut(&mut self) -> IterMut<T> {
-        let (a, b) = self.data.split_at_mut(self.idx);
+        let (a, b) = self.data.split_at_mut(self.head);
         a.iter_mut().rev().chain(b.iter_mut().rev())
     }
 
     #[inline]
     pub fn asc_iter(&self) -> AscIter<T> {
-        let (a, b) = self.data.split_at(self.idx);
+        let (a, b) = self.data.split_at(self.head);
         b.iter().chain(a.iter())
     }
 
     #[inline]
     pub fn asc_iter_mut(&mut self) -> AscIterMut<T> {
-        let (a, b) = self.data.split_at_mut(self.idx);
+        let (a, b) = self.data.split_at_mut(self.head);
         b.iter_mut().chain(a.iter_mut())
     }
 }
@@ -127,42 +125,20 @@ mod tests {
     #[test]
     fn test_circular_queue() {
         let mut queue = CircularQueue::new(3);
-        assert!(!queue.is_full());
-        assert!(queue.is_empty());
+        assert!(queue.push(1));
+        assert!(queue.push(2));
+        assert!(queue.push(3));
+        assert_eq!(queue.len(), 3);
 
-        queue.push(1);
-        queue.push(2);
-        assert!(!queue.is_full());
-        assert!(!queue.is_empty());
-        assert_eq!(Some(1), queue.front());
-        assert_eq!(Some(2), queue.back());
-
-        queue.push(3);
         assert!(queue.is_full());
-        assert!(!queue.is_empty());
-        assert_eq!(Some(1), queue.front());
-        assert_eq!(Some(3), queue.back());
+        assert!(!queue.push(4));
 
-        queue.push(4);
-        assert_eq!(Some(2), queue.front());
-        assert_eq!(Some(4), queue.back());
+        assert_eq!(queue.back(), Some(3));
+        assert!(queue.is_full());
 
-        queue.push(5);
-        assert_eq!(Some(3), queue.front());
-        assert_eq!(Some(5), queue.back());
+        assert!(queue.pop());
+        assert!(queue.push(4));
 
-        queue.push(6);
-        assert_eq!(Some(4), queue.front());
-        assert_eq!(Some(6), queue.back());
-
-        queue.push(7);
-        assert_eq!(Some(5), queue.front());
-        assert_eq!(Some(7), queue.back());
-
-        println!("{:?}", queue);
-
-        for e in queue.iter() {
-            println!("{:?}", e);
-        }
+        assert_eq!(queue.back(), Some(4));
     }
 }
