@@ -1,5 +1,5 @@
 use anyhow::Result;
-use xdiff::config::DiffConfig;
+use xdiff_core::config::xdiff::DiffConfig;
 
 fn main() -> Result<()> {
     let content = include_str!("../fixtures/test.yaml");

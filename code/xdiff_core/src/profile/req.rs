@@ -1,5 +1,6 @@
-use super::ResponseExt;
+use super::res::ResponseExt;
 use crate::cli::OverrideArgs;
+
 use std::str::FromStr;
 
 use anyhow::{anyhow, Ok, Result};

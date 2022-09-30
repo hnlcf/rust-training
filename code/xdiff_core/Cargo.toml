@@ -1,15 +1,15 @@
 [package]
-name = "xdiff"
+name = "xdiff_core"
 version = "0.1.0"
 authors = ["Changfeng Lou<louchangfeng@outlook.com>"]
 edition = "2021"
 
 [[bin]]
-name = "xdiff"
+name = "xdiff-bin"
 path = "src/bin/xdiff-bin.rs"
 
 [[bin]]
-name = "xreq"
+name = "xreq-bin"
 path = "src/bin/xreq-bin.rs"
 
 [dependencies]

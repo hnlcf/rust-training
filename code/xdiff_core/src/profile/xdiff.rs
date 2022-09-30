@@ -1,4 +1,4 @@
-use super::{RequestProfile, ResponseProfile};
+use super::{req::RequestProfile, res::ResponseProfile};
 use crate::cli::OverrideArgs;
 use crate::utils::diff_text;
 

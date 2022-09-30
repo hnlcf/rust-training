@@ -1,4 +1,4 @@
-use crate::profile::DiffProfile;
+use crate::profile::xdiff::DiffProfile;
 use std::collections::HashMap;
 
 use anyhow::{Context, Ok, Result};

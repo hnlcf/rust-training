@@ -3,10 +3,10 @@ use clap::Parser;
 use dialoguer::{theme::ColorfulTheme, Input, MultiSelect};
 use std::io::Write;
 
-use xdiff::{
+use xdiff_core::{
     cli::{Action, Args, OverrideArgs, RunArgs},
-    config::DiffConfig,
-    profile::{DiffProfile, RequestProfile, ResponseProfile},
+    config::xdiff::DiffConfig,
+    profile::{req::RequestProfile, res::ResponseProfile, xdiff::DiffProfile},
     utils::highlight_text,
 };
 
