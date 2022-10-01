@@ -1,6 +1,6 @@
 use super::{req::RequestProfile, res::ResponseProfile};
-use crate::cli::OverrideArgs;
 use crate::utils::diff_text;
+use crate::{cli::OverrideArgs, config::ValidateConfig};
 
 use anyhow::{Context, Ok, Result};
 use serde::{Deserialize, Serialize};
@@ -20,6 +20,14 @@ where
     v == &T::default()
 }
 
+impl ValidateConfig for DiffProfile {
+    fn validate(&self) -> Result<()> {
+        self.req1.validate().context("req1 failed to validate")?;
+        self.req2.validate().context("req2 failed to validate")?;
+        Ok(())
+    }
+}
+
 impl DiffProfile {
     pub fn new(req1: RequestProfile, req2: RequestProfile, res: ResponseProfile) -> Self {
         Self { req1, req2, res }
@@ -33,11 +41,5 @@ impl DiffProfile {
         let text2 = res2.get_text(&self.res).await?;
 
         diff_text(&text1, &text2)
-    }
-
-    pub fn validate(&self) -> Result<()> {
-        self.req1.validate().context("req1 failed to validate")?;
-        self.req2.validate().context("req2 failed to validate")?;
-        Ok(())
     }
 }

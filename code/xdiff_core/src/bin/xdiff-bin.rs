@@ -8,6 +8,7 @@ use xdiff_core::{
     config::xdiff::DiffConfig,
     profile::{req::RequestProfile, res::ResponseProfile, xdiff::DiffProfile},
     utils::highlight_text,
+    LoadConfig,
 };
 
 const DEFAULT_CONFIG_PATH: &str = "~/.xdiff";

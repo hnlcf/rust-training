@@ -5,12 +5,13 @@ use std::io::Write;
 
 use xdiff_core::{
     cli::{Action, Args, OverrideArgs, RunArgs},
-    config::xdiff::DiffConfig,
+    config::{xdiff::DiffConfig, xreq::RequestConfig},
     profile::{req::RequestProfile, res::ResponseProfile, xdiff::DiffProfile},
     utils::highlight_text,
+    LoadConfig,
 };
 
-const DEFAULT_CONFIG_PATH: &str = "~/.xdiff";
+const DEFAULT_CONFIG_PATH: &str = "~/.xreq";
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -29,7 +30,7 @@ async fn run(arg: RunArgs) -> Result<()> {
     let config_file = arg
         .config
         .unwrap_or_else(|| DEFAULT_CONFIG_PATH.to_string());
-    let config = DiffConfig::load_yaml(&config_file).await?;
+    let config = RequestConfig::load_yaml(&config_file).await?;
     let profile = config.get_profile(&arg.profile).ok_or_else(|| {
         anyhow!(
             "Profile {} not found in config file {}",
@@ -39,8 +40,8 @@ async fn run(arg: RunArgs) -> Result<()> {
     })?;
 
     let override_args = arg.override_args.into();
-    let output = profile.diff(override_args).await?;
-    write!(std::io::stdout().lock(), "{}", output)?;
+    let res = profile.send(&override_args).await?;
+    write!(std::io::stdout().lock(), "{:?}", res)?;
 
     Ok(())
 }

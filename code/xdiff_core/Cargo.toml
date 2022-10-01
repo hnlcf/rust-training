@@ -14,6 +14,7 @@ path = "src/bin/xreq-bin.rs"
 
 [dependencies]
 anyhow = "1.0.62"
+async-trait = "0.1.57"
 clap = { version = "3.2.17", features = ["derive"] }
 console = "0.15.1"
 dialoguer = "0.10.2"
