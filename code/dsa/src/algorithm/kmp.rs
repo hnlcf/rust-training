@@ -6,21 +6,23 @@ pub struct KmpPattern {
 
 impl KmpPattern {
     pub fn new(pat: &str) -> Self {
-        let mut obj = Self {
+        Self {
             pat: pat.chars().collect(),
             next: vec![],
             len: pat.chars().count(),
-        };
-        obj.build_next();
-        obj
+        }
     }
 
-    pub fn kmp_find_in(&self, s: &str) -> Option<usize> {
+    pub fn kmp_find_in(&mut self, s: &str) -> Option<usize> {
         let s: Vec<_> = s.chars().collect();
         let n: usize = s.len();
-        if self.len > n || self.len == 0 {
+        if self.len > n {
             return None;
         }
+        if self.len == 0 {
+            return Some(0);
+        }
+        self.build_next();
 
         let mut i: usize = 0;
         let mut j: Option<usize> = None;
@@ -77,18 +79,37 @@ mod tests {
         let s1 = "0001000010";
         let s2 = "000010";
 
-        let p = KmpPattern::new(s2);
+        let mut p = KmpPattern::new(s2);
         assert_eq!(p.kmp_find_in(s1), s1.find(s2));
 
         let s1 = "CHINALLCHILLA";
         let s2 = "CHIL";
 
-        let p = KmpPattern::new(s2);
+        let mut p = KmpPattern::new(s2);
+        assert_eq!(p.kmp_find_in(s1), s1.find(s2));
+
+        let s1 = "CHINALLCHILLA";
+        let s2 = "";
+
+        let mut p = KmpPattern::new(s2);
+        assert_eq!(p.kmp_find_in(s1), s1.find(s2));
+
+        let s1 = "";
+        let s2 = "CHIL";
+
+        let mut p = KmpPattern::new(s2);
+        assert_eq!(p.kmp_find_in(s1), s1.find(s2));
+
+        let s1 = "";
+        let s2 = "";
+
+        let mut p = KmpPattern::new(s2);
         assert_eq!(p.kmp_find_in(s1), s1.find(s2));
     }
 }
 
 mod raw {
+    #[allow(dead_code)]
     fn kmp(s: &str, pat: &str) -> Option<usize> {
         let n = s.chars().count();
         let m = pat.chars().count();
