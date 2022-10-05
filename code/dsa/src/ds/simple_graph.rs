@@ -2,18 +2,18 @@ use std::{collections::BTreeMap, fmt::Display};
 
 const GRAPH_EXPAND_SCALE: f32 = 1.3;
 
-pub struct Graph<T> {
+pub struct SimpleGraph<T> {
     pub matrix: Vec<Vec<Option<usize>>>,
     pub nodes: BTreeMap<usize, Option<T>>,
 }
 
-impl<T: Ord> Default for Graph<T> {
+impl<T: Ord> Default for SimpleGraph<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T: Ord> Graph<T> {
+impl<T: Ord> SimpleGraph<T> {
     pub fn new() -> Self {
         Self {
             matrix: vec![],
@@ -109,7 +109,7 @@ impl<T: Ord> Graph<T> {
     }
 }
 
-impl<T: Ord> Display for Graph<T> {
+impl<T: Ord> Display for SimpleGraph<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.is_empty() {
             write!(f, "Graph: empty")
@@ -143,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_graph_new() {
-        let g: Graph<String> = Graph::new();
+        let g: SimpleGraph<String> = SimpleGraph::new();
         assert_eq!(g.len(), 0);
         assert!(g.is_empty());
     }
