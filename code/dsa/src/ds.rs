@@ -1,4 +1,5 @@
 pub mod circular_queue;
+pub mod dsu;
 pub mod list;
 
 pub mod tree;
