@@ -1,5 +1,10 @@
 use super::{edge::Edge, vertex::Vertex};
 
+pub trait Graph {
+    fn connect_edge(&mut self, v1: usize, v2: usize);
+}
+
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct GraphMatrix<V, E> {
     vertices: Vec<Vertex<V>>,
