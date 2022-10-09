@@ -23,7 +23,7 @@ async fn main() -> Result<()> {
 
     while let Some(Ok(buf)) = stream.next().await {
         let msg = Response::try_from(buf)?;
-        info!("Got a repsonse: {:?}", msg);
+        info!("Got a response: {:?}", msg);
     }
     Ok(())
 }

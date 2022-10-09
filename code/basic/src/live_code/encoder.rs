@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn test_encode() {
-        let event = Event::new(1234 as u64, "hello world".to_string());
+        let event = Event::new(1234_u64, "hello world".to_string());
         let encode = event.encode().unwrap();
         println!("{:#?}", encode);
     }
