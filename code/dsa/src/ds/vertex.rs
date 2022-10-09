@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VertexState {
     /// The initial state
     Undiscovered,
@@ -14,7 +14,7 @@ pub enum VertexState {
 pub struct Vertex<T> {
     data: T,
     /// The status of the vertex
-    status: VertexState,
+    state: VertexState,
     /// The number of in edges
     in_degree: usize,
     /// The number of out edges
@@ -34,7 +34,7 @@ impl<T> Vertex<T> {
     pub fn new(data: T) -> Self {
         Vertex {
             data,
-            status: VertexState::Undiscovered,
+            state: VertexState::Undiscovered,
             in_degree: 0,
             out_degree: 0,
             start_time: -1,
@@ -42,5 +42,29 @@ impl<T> Vertex<T> {
             parent: None,
             priority: u32::MAX,
         }
+    }
+
+    pub fn state(&self) -> &VertexState {
+        &self.state
+    }
+
+    pub fn update_state(&mut self, state: VertexState) {
+        self.state = state;
+    }
+
+    pub fn update_parent(&mut self, parent: usize) {
+        self.parent = Some(parent)
+    }
+}
+
+impl<T> AsRef<Vertex<T>> for Vertex<T> {
+    fn as_ref(&self) -> &Vertex<T> {
+        self
+    }
+}
+
+impl<T> AsMut<Vertex<T>> for Vertex<T> {
+    fn as_mut(&mut self) -> &mut Vertex<T> {
+        self
     }
 }
