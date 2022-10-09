@@ -1,9 +1,2 @@
 [workspace]
-members = [
-    "code/basic",
-    "code/dsa",
-    # "code/my-redis"
-    # "code/xdiff",
-    # "code/kv",
-    "code/pow",
-]
+members = ["code/*"]

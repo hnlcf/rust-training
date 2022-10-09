@@ -2,6 +2,7 @@ target/
 
 .idea/
 .vscode/
+*.iml
 *.code-workspace
 *.sublime-workspace
 *.sublime-project
