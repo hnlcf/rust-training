@@ -140,3 +140,14 @@ where
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn graph_new() {
+        let g: GraphMatrix<u32, String> = GraphMatrix::default();
+        assert_eq!(g.size(), (0, 0));
+    }
+}
