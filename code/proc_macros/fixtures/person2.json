@@ -1,0 +1,15 @@
+{
+  "title": "Person",
+  "type": "object",
+  "properties": {
+    "skill": {
+      "type": "object",
+      "title": "skill",
+      "properties": {
+        "num": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}
