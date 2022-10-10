@@ -1,10 +1,11 @@
 pub mod generated {
     use proc_macros::generate;
 
-    generate!("fixtures/person.json");
+    generate!("code/proc_macros/fixtures/person.json");
 }
 
 use generated::*;
+
 fn main() {
     let person = Person {
         first_name: "changfeng".to_string(),
