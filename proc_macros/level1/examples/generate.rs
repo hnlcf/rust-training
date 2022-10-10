@@ -1,7 +1,7 @@
 pub mod generated {
     use proc_macros::generate;
 
-    generate!("code/proc_macros/fixtures/person.json");
+    generate!("proc_macros/level1/fixtures/person.json");
 }
 
 use generated::*;
