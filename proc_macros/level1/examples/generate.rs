@@ -1,5 +1,5 @@
 pub mod generated {
-    use proc_macros::generate;
+    use level1::generate;
 
     generate!("proc_macros/level1/fixtures/person.json");
 }
