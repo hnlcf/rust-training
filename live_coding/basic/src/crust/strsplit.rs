@@ -1,11 +1,11 @@
 #[derive(Debug)]
-pub struct StrSplit<'a> {
+pub struct StrSplit<'a, D> {
     remainder: Option<&'a str>,
-    delimiter: &'a str,
+    delimiter: D,
 }
 
-impl<'a> StrSplit<'a> {
-    pub fn new(content: &'a str, delimiter: &'a str) -> Self {
+impl<'a, D> StrSplit<'a, D> {
+    pub fn new(content: &'a str, delimiter: D) -> Self {
         Self {
             remainder: Some(content),
             delimiter,
@@ -13,20 +13,52 @@ impl<'a> StrSplit<'a> {
     }
 }
 
-impl<'a> Iterator for StrSplit<'a> {
+pub trait Delimiter {
+    fn find_next(&self, s: &str) -> Option<(usize, usize)>;
+}
+
+impl<'a, D> Iterator for StrSplit<'a, D>
+where
+    D: Delimiter,
+{
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
         let remainder = self.remainder.as_mut()?;
-        if let Some(pos) = remainder.find(self.delimiter) {
-            let former = &remainder[..pos];
-            *remainder = &remainder[(pos + self.delimiter.len())..];
+        if let Some((start, end)) = self.delimiter.find_next(remainder) {
+            let former = &remainder[..start];
+            *remainder = &remainder[end..];
 
             Some(former)
         } else {
             self.remainder.take()
         }
     }
+}
+
+impl Delimiter for &str {
+    fn find_next(&self, s: &str) -> Option<(usize, usize)> {
+        s.find(self).map(|start| (start, start + self.len()))
+    }
+}
+
+impl Delimiter for char {
+    fn find_next(&self, s: &str) -> Option<(usize, usize)> {
+        s.char_indices()
+            .position(|(_, c)| c == *self)
+            .map(|idx| (idx, idx + self.len_utf8()))
+    }
+}
+
+pub fn until_char(s: &str, c: char) -> &str {
+    StrSplit::new(s, c)
+        .next()
+        .expect("Strsplit always gives at least one result")
+}
+
+#[test]
+fn test_until_char() {
+    assert_eq!(until_char("hello world", 'o'), "hell");
 }
 
 #[cfg(test)]
