@@ -5,8 +5,8 @@ use level2::Builder;
 pub struct Command {
     executable: String,
     args: Vec<String>,
-    env: Vec<String>,
-    current_dir: String,
+    env: Option<Vec<String>>,
+    current_dir: Option<String>,
 }
 
 fn main() {

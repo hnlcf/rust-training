@@ -4,7 +4,8 @@ use std::iter::Map;
 use syn::{
     punctuated::{Iter, Punctuated},
     token::Comma,
-    Data, DataStruct, DeriveInput, Field, Fields, FieldsNamed,
+    Data, DataStruct, DeriveInput, Field, Fields, FieldsNamed, Path, PathArguments, PathSegment,
+    Type, TypePath,
 };
 
 type TokenStreamIter<'a> = Map<Iter<'a, Field>, fn(&Field) -> TokenStream>;
@@ -67,7 +68,7 @@ impl BuilderContext {
 
     fn gen_optionize_fields(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
-            let ty = &f.ty;
+            let (_, ty) = try_get_option_inner(&f.ty);
             let name = &f.ident;
             quote! {
                 #name: std::option::Option<#ty>
@@ -77,7 +78,7 @@ impl BuilderContext {
 
     fn gen_methods(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
-            let ty = &f.ty;
+            let (_, ty) = try_get_option_inner(&f.ty);
             let name = &f.ident;
             quote! {
                 pub fn #name(mut self, v: impl Into<#ty>) -> Self {
@@ -91,9 +92,43 @@ impl BuilderContext {
     fn gen_assigns(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
             let name = &f.ident;
-            quote! {
-                #name: self.#name.take().ok_or(concat!(stringify!(#name), " needs to be set!"))?
+            let (optional, _) = try_get_option_inner(&f.ty);
+            if optional {
+                quote! {
+                    #name: self.#name.take()
+                }
+            } else {
+                quote! {
+                    #name: self.#name.take().ok_or(concat!(stringify!(#name), " needs to be set!"))?
+                }
             }
         })
     }
+}
+
+fn try_get_option_inner(ty: &Type) -> (bool, &Type) {
+    if let Some(s) = get_path_segments(ty) {
+        if s.ident == "Option" {
+            let ty = match &s.arguments {
+                PathArguments::AngleBracketed(angle) => match angle.args.iter().next() {
+                    Some(syn::GenericArgument::Type(t)) => t,
+                    _ => panic!("Unsupported other generic types"),
+                },
+                _ => panic!("Unsupported other path arguments"),
+            };
+            return (true, ty);
+        }
+    }
+    (false, ty)
+}
+
+fn get_path_segments(ty: &Type) -> Option<&PathSegment> {
+    if let Type::Path(TypePath {
+        path: Path { segments, .. },
+        ..
+    }) = ty
+    {
+        return segments.iter().next();
+    }
+    None
 }
