@@ -18,6 +18,7 @@ use crate::{
 
 const BUFFER_SIZE: usize = 8;
 
+/// Table that records all clients subscribing the service.
 #[derive(Debug, Default)]
 struct Shared {
     clients: HashMap<String, Sender<Result<BlockHash, Status>>>,
@@ -30,7 +31,7 @@ impl Shared {
         }
     }
 
-    /// Send the `BlockHash` calculated to the subscribe client
+    /// Send the `BlockHash` calculated to all clients subscribing the service.
     pub async fn broadcast(&self, msg: Option<BlockHash>) {
         for (name, tx) in &self.clients {
             match tx
@@ -108,12 +109,11 @@ impl PowBuilder for PowService {
     }
 }
 
-/// Build a server
+/// Create [`PowService`], add it to server and launch server.
 ///
-/// Create four channels:
-///
-/// 1. grpc(service) -> PoW Engine for `Block`
-/// 2. PoW Engine -> grpc(service) for `BlockHash`
+/// Create two channels:
+/// - Server(PowService) -> PoW Engine for `Block`
+/// - PoW Engine -> Server(PowService) for `BlockHash`
 pub async fn launch_server(addr: &str) -> Result<()> {
     let (tx1, mut rx1) = mpsc::channel(BUFFER_SIZE);
     let (tx2, rx2) = mpsc::channel(BUFFER_SIZE);
