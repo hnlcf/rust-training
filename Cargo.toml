@@ -1,2 +1,2 @@
 [workspace]
-members = ["live_coding/*", "proc_macros/*"]
+members = ["live_coding/*", "live_coding/xdiff_core", "proc_macros/*"]
