@@ -2,6 +2,7 @@ use std::{collections::BTreeMap, fmt::Display};
 
 const GRAPH_EXPAND_SCALE: f32 = 1.3;
 
+#[derive(Debug)]
 pub struct SimpleGraph<T> {
     pub matrix: Vec<Vec<Option<usize>>>,
     pub nodes: BTreeMap<usize, Option<T>>,
@@ -87,6 +88,7 @@ impl<T: Ord> SimpleGraph<T> {
         if self.remove_vertex(index) {
             for i in 0..self.max_key() {
                 self.remove_edge(i, index);
+                self.matrix[index][i] = None;
             }
             true
         } else {
@@ -144,6 +146,7 @@ mod tests {
     #[test]
     fn test_graph_new() {
         let g: SimpleGraph<String> = SimpleGraph::new();
+        println!("{:#?}", g);
         assert_eq!(g.len(), 0);
         assert!(g.is_empty());
     }
