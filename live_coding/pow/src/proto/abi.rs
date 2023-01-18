@@ -1,4 +1,5 @@
 /// naive block
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Block {
     #[prost(bytes = "vec", tag = "1")]
@@ -10,16 +11,19 @@ pub struct Block {
     #[prost(uint32, tag = "3")]
     pub nonce: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BlockStatus {
     #[prost(uint32, tag = "1")]
     pub code: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ClientInfo {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BlockHash {
     /// unique id for the block
@@ -144,10 +148,10 @@ pub mod pow_builder_client {
 pub mod pow_builder_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with PowBuilderServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with PowBuilderServer.
     #[async_trait]
     pub trait PowBuilder: Send + Sync + 'static {
-        ///Server streaming response type for the Subscribe method.
+        /// Server streaming response type for the Subscribe method.
         type SubscribeStream: futures_core::Stream<
                 Item = Result<super::BlockHash, tonic::Status>,
             >
