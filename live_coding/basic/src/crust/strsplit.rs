@@ -1,3 +1,7 @@
+pub trait Delimiter {
+    fn find_next(&self, s: &str) -> Option<(usize, usize)>;
+}
+
 #[derive(Debug)]
 pub struct StrSplit<'a, D> {
     remainder: Option<&'a str>,
@@ -11,10 +15,6 @@ impl<'a, D> StrSplit<'a, D> {
             delimiter,
         }
     }
-}
-
-pub trait Delimiter {
-    fn find_next(&self, s: &str) -> Option<(usize, usize)>;
 }
 
 impl<'a, D> Iterator for StrSplit<'a, D>
@@ -56,14 +56,14 @@ pub fn until_char(s: &str, c: char) -> &str {
         .expect("Strsplit always gives at least one result")
 }
 
-#[test]
-fn test_until_char() {
-    assert_eq!(until_char("hello world", 'o'), "hell");
-}
-
 #[cfg(test)]
 mod tests {
-    use super::StrSplit;
+    use super::*;
+
+    #[test]
+    fn test_until_char() {
+        assert_eq!(until_char("hello world", 'o'), "hell");
+    }
 
     #[test]
     fn test_strsplit_general() {
